@@ -4,7 +4,7 @@ VLAN_NAME=$2
 VLAN_IPADDRESS=$3
 VLAN_SUBNETMASK=$4
 echo "**********************************Configuring L2 Switch************************"
-cd /root/L2
+cd /root/workspace/TestVariable/L2
 >/var/log/ansible.log
 ansible-playbook playbook.yaml -i hosts -e vlanId=${VLAN_ID} -e vlanName=${VLAN_NAME}
 cat /var/log/ansible.log | grep -i 'skipped=1'
@@ -17,7 +17,7 @@ echo "VLAN has been configured in L2 switch"
 fi
 > /var/log/ansible.log
 echo "**********************************Configuring L3 Switch************************"
-cd /root/L3
+cd /root/workspace/TestVariable/L3
 ansible-playbook playbook.yaml -i hosts -e vlanId=${VLAN_ID} -e vlanName=${VLAN_NAME} -e ipAddr=${VLAN_IPADDRESS} -e subNet=${VLAN_SUBNETMASK}
 cat /var/log/ansible.log | grep -i 'skipped=1'
 ES=`echo $?`
