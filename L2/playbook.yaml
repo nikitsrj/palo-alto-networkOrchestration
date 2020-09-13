@@ -1,0 +1,108 @@
+---
+- hosts: any
+  vars: 
+    vlanId: VLANID
+    vlanName: VLANNAME
+
+- hosts: l2switch
+  gather_facts: false
+  tasks: 
+    - name: send configuration commands to l2
+      telnet:
+        user: "admin"
+        password: "switch"
+        login_prompt: "login : "
+        password_prompt: "password : "
+        prompts:
+          - "[>]"
+        command:
+          - show vlan {{ vlanId }} 
+      register: vlanCreationOutput
+    - debug: var=vlanCreationOutput
+
+    - name: The Input Vlan is not in use, so creating one
+      when: 
+        - vlanCreationOutput.output is search("ERROR")
+        - vlanCreationOutput.output is not search("{{ vlanName }}")
+      telnet:
+        user: "admin"
+        password: "switch"
+        login_prompt: "login : "
+        password_prompt: "password : "
+        prompts:
+          - "[>]"
+        command:
+          - vlan {{ vlanId }} enable name {{ vlanName }}
+          - show vlan {{ vlanId }}
+      register: vlanCreateConfirmOutput
+    - debug: var=vlanCreateConfirmOutput
+
+    - name: List out the tagged ports
+      when:  vlanCreateConfirmOutput|d('')!='' or  vlanCreationOutput.output is search("{{ vlanName }}")
+      telnet:
+        user: "admin"
+        password: "switch"
+        login_prompt: "login : "
+        password_prompt: "password : "
+        prompts:
+          - "[>]"
+        command:
+          - show vlan port
+      register: vlanPortOutput
+    - debug: var=vlanPortOutput 
+
+- hosts: localhost
+  tasks:
+
+    - name: Getting Port output
+      shell: echo -e "{{ hostvars['172.20.191.253']['vlanPortOutput'].output }}\n" > {{ playbook_dir }}/output.txt
+
+    - name: Paring the untagged port
+      shell: cat output.txt | grep qtagged| awk {'print $2'} | uniq
+      register: taggedPorts
+    - debug: var=taggedPorts.stdout_lines|list
+
+    - name: echo one by one
+      shell: echo "{{ item }}"
+      with_items: 
+      - "{{ taggedPorts.stdout_lines|list }}"
+    
+
+- hosts: l2switch
+  gather_facts: false
+  tasks:
+    - debug: var=hostvars['localhost']['taggedPorts']
+      when: hostvars['localhost']['taggedPorts'] is defined
+
+    - name: tag the port to VLAN
+      telnet:
+        user: "admin"
+        password: "switch"
+        login_prompt: "login : "
+        password_prompt: "password : "
+        prompts:
+          - "[>]"
+        command:
+          - vlan {{ vlanId }} 802.1q {{ item }}
+      with_items:
+      - "{{ hostvars['localhost']['taggedPorts'].stdout_lines|list }}"
+
+    - pause: seconds=10
+ 
+    - name: Post Check on L2 to confirm the port
+      telnet:
+        user: "admin"
+        password: "switch"
+        login_prompt: "login : "
+        password_prompt: "password : "
+        prompts:
+          - "[>]"
+        command:
+          - show vlan {{ vlanId }} port
+      register: l2postcheck
+    - debug: var=l2postcheck
+
+    - debug: 
+        msg: The vlan has been configured
+      when: l2postcheck.output is search("qtagged") 
+

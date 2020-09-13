@@ -1,0 +1,55 @@
+[' show vlan port
+ vlan   port     type      status
+------+-------+---------+-------------
+    1    1/1    default     inactive
+    1    1/2    default     inactive
+    1    1/3    default     inactive
+    1    1/4    default     inactive
+    1    1/5    default     inactive
+    1    1/6    default     inactive
+    1    1/7    default     inactive
+    1    1/8    default     inactive
+    1    1/9    default     inactive
+    1    1/10   default     inactive
+    1    1/11   default     inactive
+    1    1/12   default     inactive
+    1    1/13   default     inactive
+    1    1/14   default     inactive
+    1    1/15   default     inactive
+    1    1/16   default     inactive
+    1    1/17   default     inactive
+    1    1/18   default     inactive
+    1    1/19   default     inactive
+    1    1/20   default     inactive
+    1    1/21   default     inactive
+    1    1/22   default     inactive
+    1    1/23   default   forwarding
+    1    1/24   default     inactive
+   10    1/23   qtagged   forwarding
+   20    1/23   qtagged   forwarding
+   30    1/23   qtagged   forwarding
+   31    1/23   qtagged   forwarding
+   40    1/23   qtagged   forwarding
+   41    1/23   qtagged   forwarding
+   42    1/23   qtagged   forwarding
+   47    1/23   qtagged   forwarding
+   48    1/23   qtagged   forwarding
+   49    1/23   qtagged   forwarding
+   51    1/23   qtagged   forwarding
+   53    1/23   qtagged   forwarding
+   54    1/23   qtagged   forwarding
+   55    1/23   qtagged   forwarding
+   58    1/23   qtagged   forwarding
+   59    1/23   qtagged   forwarding
+  100    1/23   qtagged   forwarding
+  200    1/23   qtagged   forwarding
+  202    1/23   qtagged   forwarding
+  203    1/23   qtagged   forwarding
+  204    1/23   qtagged   forwarding
+  205    1/23   qtagged   forwarding
+  206    1/23   qtagged   forwarding
+  207    1/23   qtagged   forwarding
+  500    1/23   qtagged   forwarding
+
+->']
+

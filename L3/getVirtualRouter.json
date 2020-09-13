@@ -1,0 +1,209 @@
+{
+  "entry": [
+    {
+      "@name": "default",
+      "routing-table": {
+        "ip": {
+          "static-route": {
+            "entry": [
+              {
+                "@name": "user_segment",
+                "nexthop": {
+                  "ip-address": "172.31.238.238"
+                },
+                "bfd": {
+                  "profile": "None"
+                },
+                "path-monitor": {
+                  "enable": "no",
+                  "failure-condition": "any",
+                  "hold-time": "2"
+                },
+                "interface": "ethernet1/2",
+                "metric": "10",
+                "destination": "131.7.58.0/23",
+                "route-table": {
+                  "unicast": {}
+                }
+              },
+              {
+                "@name": "VLAN Static",
+                "nexthop": {
+                  "ip-address": "172.31.238.238"
+                },
+                "bfd": {
+                  "profile": "None"
+                },
+                "path-monitor": {
+                  "enable": "no",
+                  "failure-condition": "any",
+                  "hold-time": "2"
+                },
+                "interface": "ethernet1/2",
+                "metric": "10",
+                "destination": "test",
+                "route-table": {
+                  "unicast": {}
+                }
+              },
+              {
+                "@name": "VLAN_200",
+                "nexthop": {
+                  "ip-address": "172.31.238.238"
+                },
+                "bfd": {
+                  "profile": "None"
+                },
+                "path-monitor": {
+                  "enable": "no",
+                  "failure-condition": "any",
+                  "hold-time": "2"
+                },
+                "interface": "ethernet1/2",
+                "metric": "10",
+                "destination": "192.168.200.0/24",
+                "route-table": {
+                  "unicast": {}
+                }
+              },
+              {
+                "@name": "203_VLAN203",
+                "path-monitor": {
+                  "enable": "no",
+                  "failure-condition": "any",
+                  "hold-time": "2"
+                },
+                "nexthop": {
+                  "ip-address": "172.31.238.238"
+                },
+                "bfd": {
+                  "profile": "None"
+                },
+                "interface": "ethernet1/2",
+                "metric": "10",
+                "destination": "203_VLAN203",
+                "route-table": {
+                  "unicast": {}
+                }
+              },
+              {
+                "@name": "204_VLAN_204",
+                "path-monitor": {
+                  "enable": "no",
+                  "failure-condition": "any",
+                  "hold-time": "2"
+                },
+                "nexthop": {
+                  "ip-address": "172.31.238.238"
+                },
+                "bfd": {
+                  "profile": "None"
+                },
+                "interface": "ethernet1/2",
+                "metric": "10",
+                "destination": "204_VLAN_204",
+                "route-table": {
+                  "unicast": {}
+                }
+              },
+              {
+                "@name": "205_Vlan205",
+                "path-monitor": {
+                  "enable": "no",
+                  "failure-condition": "any",
+                  "hold-time": "2"
+                },
+                "nexthop": {
+                  "ip-address": "172.31.238.238"
+                },
+                "bfd": {
+                  "profile": "None"
+                },
+                "interface": "ethernet1/2",
+                "metric": "10",
+                "destination": "205_Vlan205",
+                "route-table": {
+                  "unicast": {}
+                }
+              },
+              {
+                "@name": "206_vlan206",
+                "path-monitor": {
+                  "enable": "no",
+                  "failure-condition": "any",
+                  "hold-time": "2"
+                },
+                "nexthop": {
+                  "ip-address": "172.31.238.238"
+                },
+                "bfd": {
+                  "profile": "None"
+                },
+                "interface": "ethernet1/2",
+                "metric": "10",
+                "destination": "206_vlan206",
+                "route-table": {
+                  "unicast": {}
+                }
+              },
+              {
+                "@name": "208_vlan208",
+                "path-monitor": {
+                  "enable": "no",
+                  "failure-condition": "any",
+                  "hold-time": "2"
+                },
+                "nexthop": {
+                  "ip-address": "172.31.238.238"
+                },
+                "bfd": {
+                  "profile": "None"
+                },
+                "interface": "ethernet1/2",
+                "metric": "10",
+                "destination": "208_vlan208",
+                "route-table": {
+                  "unicast": {}
+                }
+              }
+            ]
+          }
+        }
+      },
+      "interface": {
+        "member": [
+          "ethernet1/1",
+          "ethernet1/2",
+          "ethernet1/5",
+          "loopback.1",
+          "loopback.2",
+          "tunnel.10"
+        ]
+      },
+      "ecmp": {
+        "algorithm": {
+          "ip-modulo": {}
+        }
+      },
+      "protocol": {
+        "bgp": {
+          "routing-options": {
+            "graceful-restart": {
+              "enable": "yes"
+            }
+          },
+          "enable": "no"
+        },
+        "rip": {
+          "enable": "no"
+        },
+        "ospf": {
+          "enable": "no"
+        },
+        "ospfv3": {
+          "enable": "no"
+        }
+      }
+    }
+  ]
+}

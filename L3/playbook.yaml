@@ -1,0 +1,144 @@
+---
+- hosts: any
+  vars:
+    vlanId: VLANID
+    vlanName: VLANNAME
+    ipAddr: IPAddress
+    subNet: SUBNETmask
+ 
+
+- hosts: l3switch
+  gather_facts: false
+  tasks:
+    - name: send configuration commands to l3
+      telnet:
+        user: "admin"
+        password: "switch"
+        login_prompt: "OS6860 login: "
+        password_prompt: "Password: "
+        prompts:
+          - "[>]"
+        command:
+          - show vlan {{ vlanId }}
+      register: vlanCreationOutput
+    - debug: var=vlanCreationOutput
+
+    - name: The Input Vlan is not in use, so creating one
+      when:
+        - vlanCreationOutput.output is search("ERROR")
+        - vlanCreationOutput.output is not search("{{ vlanName }}")
+      telnet:
+        user: "admin"
+        password: "switch"
+        login_prompt: "OS6860 login: "
+        password_prompt: "Password: "
+        prompts:
+          - "[>]"
+        command:
+          - vlan {{ vlanId }} admin-state enable name {{ vlanName }}
+          - show vlan {{ vlanId }}
+      register: vlanCreateConfirmOutput
+    - debug: var=vlanCreateConfirmOutput
+
+    - name: List out the tagged ports
+      when:  vlanCreateConfirmOutput|d('')!='' or  vlanCreationOutput.output is search("{{ vlanName }}")
+      telnet:
+        user: "admin"
+        password: "switch"
+        login_prompt: "OS6860 login: "
+        password_prompt: "Password: "
+        prompts:
+          - "[>]"
+        command:
+          - show vlan members
+      register: vlanPortOutput
+    - debug: var=vlanPortOutput
+
+- hosts: localhost
+  tasks:
+#    - debug: var=hostvars['172.20.191.254']['vlanPortOutput']
+#      when: hostvars['172.20.191.254']['vlanPortOutput'] is defined
+
+    - name: Getting Port output
+      shell: echo -e "{{ hostvars['172.20.191.254']['vlanPortOutput'].output }}\n" > {{ playbook_dir }}/output.txt
+
+    - name: Paring the untagged port
+      shell: cat output.txt | grep qtagged| awk {'print $2'} | sort | uniq
+      register: taggedPorts
+    - debug: var=taggedPorts.stdout_lines|list
+
+    - name: echo one by one
+      shell: echo "{{ item }}"
+      with_items:
+      - "{{ taggedPorts.stdout_lines|list }}"
+
+- hosts: l3switch
+  gather_facts: false
+  tasks:
+    - debug: var=hostvars['localhost']['taggedPorts']
+      when: hostvars['localhost']['taggedPorts'] is defined
+
+    - name: tag the port to VLAN
+      telnet:
+        user: "admin"
+        password: "switch"
+        login_prompt: "OS6860 login: "
+        password_prompt: "Password: "
+        prompts:
+          - "[>]"
+        command:
+          - vlan {{ vlanId }} members port {{ item }} tagged
+      with_items:
+      - "{{ hostvars['localhost']['taggedPorts'].stdout_lines|list }}"
+
+    - pause: seconds=10
+
+    - name: SpanTree and IP assignment to Vlan 
+      telnet:
+        user: "admin"
+        password: "switch"
+        login_prompt: "OS6860 login: "
+        password_prompt: "Password: "
+        prompts:
+          - "[>]"
+        command:
+          - spantree vlan {{ vlanId }} admin-state enable
+          - ip interface {{ vlanName }} address {{ ipAddr }} mask {{ subNet }} vlan {{ vlanId }}
+
+    - name: Post check on L3 to confirm member
+      telnet:
+        user: "admin"
+        password: "switch"
+        login_prompt: "OS6860 login: "
+        password_prompt: "Password: "
+        prompts:
+          - "[>]"
+        command:
+          - show vlan {{ vlanId }} members
+      register: l3postmembercheck
+    - debug: var=l3postmembercheck
+     
+    - debug:
+        msg: The port has been configured
+      when: l3postmembercheck.output is search("qtagged")
+
+
+    - name: Post check on L3 to confirm ip interface
+      telnet:
+        user: "admin"
+        password: "switch"
+        login_prompt: "OS6860 login: "
+        password_prompt: "Password: "
+        prompts:
+          - "[>]"
+        command:
+          - show ip interface {{ vlanName }}
+      register: l3postinterfacecheck
+    - debug: var=l3postinterfacecheck
+
+    - debug:
+        msg: The vlan IPinterface has been configured
+      when: l3postinterfacecheck.output is search("IP Address")
+
+
+
