@@ -35,11 +35,11 @@ PREFIX=`ipcalc -p ${VLAN_IPADDRESS} ${VLAN_SUBNETMASK} | sed -n 's/PREFIX=//p'`
 IPNETMASK=$NETWORK/$PREFIX
 #############################################Object Creation########################
 
-curl -v -k -X POST "https://172.20.191.195/restapi/9.0/Objects/Addresses?location=vsys&vsys=vsys1&key=LUFRPT16dE11dHFwWXpSVEMwcnVMSVlQWWg1aHh4enM9SktKZzNoR1hVdXJ6MUJDQmpjd1ZoNkRGcC9tNWt2Q1ZXQkRuQ0hSUXFBYUtkaGh0bnE2UzlVUFYrV0RXbCtQeg==&name=$OBJECTNAME" -d '{ "entry": [ { "@name": "'"$OBJECTNAME"'", "ip-netmask": "'"$IPNETMASK"'", "description": "VLANOBJECTPOC" }]}'
+curl -v -k -X POST "https://172.20.191.195/restapi/9.0/Objects/Addresses?location=vsys&vsys=vsys1&key=LUFRPT1aM0Zma3AzRjVUbnlPMzZGSU9BdUVqVHBUZFE9bVZMNFlIWm0yQlZxbVFTYkx4M3h4QVpuQU9qVEh6T3B2THZPdnRCMnNqWWUxMk41UkZGSW5FNWtqRHBlUEt4YQ==&name=$OBJECTNAME" -d '{ "entry": [ { "@name": "'"$OBJECTNAME"'", "ip-netmask": "'"$IPNETMASK"'", "description": "VLANOBJECTPOC" }]}'
 
 #############################Rule Creation##################
 curl -k -v -X --location --request POST "https://172.20.191.195/restapi/v10.0/Policies/SecurityRules?name=RDP_SVR_toSvr_Net_$OBJECTNAME&location=vsys&vsys=vsys1" \
---header 'X-PAN-KEY: LUFRPT16dE11dHFwWXpSVEMwcnVMSVlQWWg1aHh4enM9SktKZzNoR1hVdXJ6MUJDQmpjd1ZoNkRGcC9tNWt2Q1ZXQkRuQ0hSUXFBYUtkaGh0bnE2UzlVUFYrV0RXbCtQeg==' \
+--header 'X-PAN-KEY: LUFRPT1aM0Zma3AzRjVUbnlPMzZGSU9BdUVqVHBUZFE9bVZMNFlIWm0yQlZxbVFTYkx4M3h4QVpuQU9qVEh6T3B2THZPdnRCMnNqWWUxMk41UkZGSW5FNWtqRHBlUEt4YQ==' \
 --header 'Content-Type: application/json' \
 --header 'Cookie: PHPSESSID=ef34ecbaf287f8814493d224890759a5' \
 -d '{
@@ -135,18 +135,18 @@ curl -k -v -X --location --request POST "https://172.20.191.195/restapi/v10.0/Po
 }'
 
 ######################## Update the virtual Router #############################
-curl -k -v -X --location --request GET 'https://172.20.191.195/restapi/v10.0/Network/VirtualRouters?@name=default' --header 'X-PAN-KEY: LUFRPT0rUmVOTGw5WXJoUFBYb1AzdThZK0lVRWd5dW89SktKZzNoR1hVdXJ6MUJDQmpjd1ZoM1Q0aWtxRUZkazI0VlhScjE2RjUzVm13NGoyaXRTS08wWCthWGV5Zk11Lw==' | jq .[] | sed '1,2d' | sed '2,3d' > getVirtualRouter.json
+curl -k -v -X --location --request GET 'https://172.20.191.195/restapi/v10.0/Network/VirtualRouters?@name=default' --header 'X-PAN-KEY: LUFRPT1aM0Zma3AzRjVUbnlPMzZGSU9BdUVqVHBUZFE9bVZMNFlIWm0yQlZxbVFTYkx4M3h4QVpuQU9qVEh6T3B2THZPdnRCMnNqWWUxMk41UkZGSW5FNWtqRHBlUEt4YQ==' | jq .[] | sed '1,2d' | sed '2,3d' > getVirtualRouter.json
 
 cat getVirtualRouter.json | jq '.entry[]."routing-table".ip."static-route".entry |= . + [{"@name":"'"$OBJECTNAME"'","path-monitor":{"enable":"no","failure-condition":"any","hold-time":"2"},"nexthop":{"ip-address":"172.31.238.238"},"bfd":{"profile":"None"},"interface":"ethernet1/2","metric":"10","destination":"'"$OBJECTNAME"'","route-table":{"unicast":{}}}]' | sponge getVirtualRouter.json
 
-curl -k -v -X --location --request PUT 'https://172.20.191.195/restapi/v10.0/Network/VirtualRouters?@name=default' --header 'X-PAN-KEY: LUFRPT16dE11dHFwWXpSVEMwcnVMSVlQWWg1aHh4enM9SktKZzNoR1hVdXJ6MUJDQmpjd1ZoNkRGcC9tNWt2Q1ZXQkRuQ0hSUXFBYUtkaGh0bnE2UzlVUFYrV0RXbCtQeg==' --header 'Content-Type: application/json' --header 'Cookie: PHPSESSID=ef34ecbaf287f8814493d224890759a5' -d @getVirtualRouter.json
+curl -k -v -X --location --request PUT 'https://172.20.191.195/restapi/v10.0/Network/VirtualRouters?@name=default' --header 'X-PAN-KEY: LUFRPT1aM0Zma3AzRjVUbnlPMzZGSU9BdUVqVHBUZFE9bVZMNFlIWm0yQlZxbVFTYkx4M3h4QVpuQU9qVEh6T3B2THZPdnRCMnNqWWUxMk41UkZGSW5FNWtqRHBlUEt4YQ==' --header 'Content-Type: application/json' --header 'Cookie: PHPSESSID=ef34ecbaf287f8814493d224890759a5' -d @getVirtualRouter.json
 
 
 #######################Commit the changes in Firewall###########################
 
 
 
-curl -k -v 'https://172.20.191.195/api/?key=LUFRPT16dE11dHFwWXpSVEMwcnVMSVlQWWg1aHh4enM9SktKZzNoR1hVdXJ6MUJDQmpjd1ZoNkRGcC9tNWt2Q1ZXQkRuQ0hSUXFBYUtkaGh0bnE2UzlVUFYrV0RXbCtQeg==&type=commit&cmd=<commit></commit>'
+curl -k -v 'https://172.20.191.195/api/?key=LUFRPT1aM0Zma3AzRjVUbnlPMzZGSU9BdUVqVHBUZFE9bVZMNFlIWm0yQlZxbVFTYkx4M3h4QVpuQU9qVEh6T3B2THZPdnRCMnNqWWUxMk41UkZGSW5FNWtqRHBlUEt4YQ==&type=commit&cmd=<commit></commit>'
 
 
 
